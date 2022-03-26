@@ -1,5 +1,5 @@
 <script context="module">
-import db from '$lib/db';
+    import db from '$lib/db'
 
     export async function load(){
     const { data, error } = await db.from('todos').select()
@@ -10,13 +10,17 @@ import db from '$lib/db';
 </script>
 
 <script>
+    import Flatpickr from 'svelte-flatpickr';
+    import flatpickr from 'flatpickr';
     import { uuid } from '$lib/utils';
     let newtodo = {isCompleted: false, isEditing: false, task: '', date: '', id: uuid()};
     export let todos;
 
-    let addTodo = async (newtodo) => {
-        const { data, error } = await db.from('todos').insert([{newtodo}]);
+    let addTodo = async () => {
+        let modifiedtodo = {...newtodo, date: newtodo.date != '' ? flatpickr.formatDate(new Date(newtodo.date), 'Z'): null};
+        const { data, error } = await db.from('todos').insert(modifiedtodo);
         todos = [...todos, newtodo];
+        newtodo = {isCompleted: false, isEditing: false, task: '', date: '', id: uuid()};
         
         console.log("🚀 ~ file: todo.svelte ~ line 20 ~ addTodo ~ data", data)
         console.log("🚀 ~ file: todo.svelte ~ line 20 ~ addTodo ~ error", error)
