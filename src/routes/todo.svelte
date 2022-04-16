@@ -12,13 +12,18 @@
 <script>
     import Flatpickr from 'svelte-flatpickr';
     import flatpickr from 'flatpickr';
+	import 'flatpickr/dist/flatpickr.css';
+	import 'flatpickr/dist/themes/light.css';
     import { uuid } from '$lib/utils';
+
     let newtodo = {isCompleted: false, isEditing: false, task: '', date: '', id: uuid()};
-    export let todos;
+    export let todos = [];
+    $:console.log(todos);
+    let value, formattedValue;
 
     let addTodo = async () => {
         let modifiedtodo = {...newtodo, date: newtodo.date != '' ? flatpickr.formatDate(new Date(newtodo.date), 'Z'): null};
-        const { data, error } = await db.from('todos').insert(modifiedtodo);
+        const { data, error } = await db.from('todos').upsert(modifiedtodo);
         todos = [...todos, newtodo];
         newtodo = {isCompleted: false, isEditing: false, task: '', date: '', id: uuid()};
         
@@ -26,34 +31,48 @@
         console.log("🚀 ~ file: todo.svelte ~ line 20 ~ addTodo ~ error", error)
     };
 
-    function deleteTodo(id) {
+    let deleteTodo = async (id) => {
         todos = todos.filter((t) => t.id != id);
+        const { data, error } = await db.from('todos').delete().eq('id', id);
     }
 
     function editTodo(todo) {
-        todos[todos.findIndex((t) => (t.id == todo.id))]= {...todo, isEditing: !todo.isEditing};
+        todos[todos.findIndex((t) => (t.id == todo.id))] = {...todo, isEditing: !todo.isEditing};
+        console.log(todo)
     }
+
+    let saveTodo = async (todo) => {
+        const { data, error } = await db.from('todos').upsert(todo);
+        todos[todos.findIndex((t) => (t.id == todo.id))] = {...todo, isEditing: !todo.isEditing};
+    }
+
+    const options = {
+        altInput: true,
+        altFormat: "d/m/Y",
+        dateFormat: "Y-m-d",
+	}
+
 </script>
 
 <h2>to do</h2>
 
-<div id=newtodo>
+<div id="newtodo">
     <input bind:value={newtodo.task} type="text" placeholder="input your to do here">
-    <input bind:value={newtodo.date} type="date" placeholder="due date of to do">
+    <Flatpickr {options} bind:value={newtodo.date} bind:formattedValue name="date" />
     <button on:click={addTodo} type="submit">add to do</button>
 </div>
 
 <ul>
-    {#each todos as todo}
+    {#each todos || [] as todo}
         <li>
             <input type="checkbox">
             {#if todo.isEditing}
                  <input bind:value={todo.task} type="text" placeholder={todo.task}>
-                 <input bind:value={todo.date} type="date" placeholder={todo.date}>
-                 <button on:click={() => editTodo(todo)}>save</button>
+                 <Flatpickr {options} bind:value={newtodo.date} bind:formattedValue name="date" />
+                 <button on:click={() => saveTodo(todo)}>save</button>
             {:else}
                  <span>{todo.task}</span>
-                 <span>{todo.date}</span>
+                 <span>{todo.date == null ? '' : flatpickr.formatDate(new Date(todo.date), "d/m/Y")}</span>
                  <button on:click={() => editTodo(todo)}>edit</button>
             {/if}
             <button on:click={() => deleteTodo(todo.id)} type="submit">delete</button>
