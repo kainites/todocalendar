@@ -137,3 +137,8 @@ footer {
   font-size: 0.75rem;
   text-align: center;
 }
+
+.calendar-day--not-current {
+  background-color: var(--grey-100);
+  color: var(--grey-300);
+}
