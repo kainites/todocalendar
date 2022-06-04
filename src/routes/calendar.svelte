@@ -13,10 +13,17 @@ import { browser } from "$app/env";
     dayjs.extend(weekday);
     dayjs.extend(weekOfYear);
 
-    const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+    const WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+    const TODAY = dayjs().format("YYYY-MM-DD");
+
     const INITIAL_YEAR = dayjs().format("YYYY");
     const INITIAL_MONTH = dayjs().format("M");
+    
     const daysOfWeekElement = document.getElementById("days-of-week")
+    const calendarDaysElement = document.getElementById("calendar-days");
+
+    const dayElement = document.createElement("li");
+    const dayElementClassList = dayElement.classList;
 
     // Loop through the array of weekdays
     WEEKDAYS.forEach(weekday => {
@@ -28,20 +35,29 @@ import { browser } from "$app/env";
         weekDayElement.innerText = weekday;
     });
     
-    let currentMonthDays = createDaysForCurrentMonth(INITIAL_YEAR, INITIAL_MONTH)
-    // @ts-ignore
-    let previousMonthDays = createDaysForPreviousMonth(INITIAL_YEAR, INITIAL_MONTH, currentMonthDays[0])
-    // @ts-ignore
-    let nextMonthDays = createDaysForNextMonth(INITIAL_YEAR, INITIAL_MONTH)
-    let days = [...this.previousMonthDays, ...this.currentMonthDays, ...this.nextMonthDays]
+    function appendDay(day, calendarDaysElement) {
+        // Generic calendar day class
+        dayElementClassList.add("calendar-day");
 
-    let selectedMonth = dayjs(new Date(+INITIAL_YEAR, +INITIAL_MONTH - 1, 1));
+        // Container for day of month number
+        const dayOfMonthElement = document.createElement("span");
 
-    const TODAY = dayjs().format("YYYY-MM-DD");
+        // Content
+        dayOfMonthElement.innerText = day.dayOfMonth;
+        
+        // Add an extra class to differentiate current month days from prev/next month days
+        if (!day.isCurrentMonth) {
+            dayElementClassList.add("calendar-day--not-current");
+        }
 
-    const dayElement = document.createElement("li");
-    const dayElementClassList = dayElement.classList;
+        // Append the element to the container element
+        dayElement.appendChild(dayOfMonthElement);
+        calendarDaysElement.appendChild(dayElement);
 
+        if (day.date === TODAY) {
+            dayElementClassList.add("calendar-day--today");
+        }
+    }
 
     function getNumberOfDaysInMonth(year, month) {
         return dayjs(`${year}-${month}-01`).daysInMonth();
@@ -49,12 +65,17 @@ import { browser } from "$app/env";
 
     function createDaysForCurrentMonth(year, month) {
         return [...Array(getNumberOfDaysInMonth(year, month))].map((day, index) => {
-        return {
-            date: dayjs(`${year}-${month}-${index + 1}`).format("YYYY-MM-DD"),
-            dayOfMonth: index + 1,
-            isCurrentMonth: true
-        };
-    });
+            return {
+                date: dayjs(`${year}-${month}-${index + 1}`).format("YYYY-MM-DD"),
+                dayOfMonth: index + 1,
+                isCurrentMonth: true
+            };
+        });
+    };
+
+    function getWeekday(date) {
+        return dayjs(date).weekday();
+    };
 
     function createDaysForPreviousMonth(year, month) {
         const firstDayOfTheMonthWeekday = getWeekday(currentMonthDays[0].date);
@@ -84,36 +105,20 @@ import { browser } from "$app/env";
 
         return [...Array(visibleNumberOfDaysFromNextMonth)].map((day, index) => {
             return {
-            date: dayjs(`${year}-${Number(month) + 1}-${index + 1}`).format("YYYY-MM-DD"),
-            dayOfMonth: index + 1,
-            isCurrentMonth: false
+                date: dayjs(`${year}-${Number(month) + 1}-${index + 1}`).format("YYYY-MM-DD"),
+                dayOfMonth: index + 1,
+                isCurrentMonth: false
             }
         })
     }
-    
-    function getWeekday(date) {
-        return dayjs(date).weekday();
-    };
 
-    function appendDay(day, calendarDaysElement) {
-        // Generic calendar day class
-        dayElementClassList.add("calendar-day");
+    let currentMonthDays = createDaysForCurrentMonth(INITIAL_YEAR, INITIAL_MONTH)
+    // @ts-ignore
+    let previousMonthDays = createDaysForPreviousMonth(INITIAL_YEAR, INITIAL_MONTH, currentMonthDays[0])
+    // @ts-ignore
+    let nextMonthDays = createDaysForNextMonth(INITIAL_YEAR, INITIAL_MONTH)
+    let days = [...this.previousMonthDays, ...this.currentMonthDays, ...this.nextMonthDays]
 
-        // Container for day of month number
-        const dayOfMonthElement = document.createElement("span");
-
-        // Content
-        dayOfMonthElement.innerText = day.dayOfMonth;
-        
-        // Add an extra class to differentiate current month days from prev/next month days
-        if (!day.isCurrentMonth) {
-            dayElementClassList.add("calendar-day--not-current");
-        }
-
-        // Append the element to the container element
-        dayElement.appendChild(dayOfMonthElement);
-        calendarDaysElement.appendChild(dayElement);
-    }
 
     function removeAllDayElements(calendarDaysElement) {
         let first = calendarDaysElement.firstElementChild;
@@ -123,11 +128,12 @@ import { browser } from "$app/env";
             first = calendarDaysElement.firstElementChild;
         }
     }
-    
+
     function createCalendar(year = INITIAL_YEAR, month = INITIAL_MONTH) {
-        document.getElementById("selected-month").innerText = dayjs(new Date(+year, +month - 1)).format("MMMM YYYY");
+        document.getElementById("selected-month").innerText = dayjs(
+            new Date(+year, +month - 1)
+            ).format("MMMM YYYY");
     
-        const calendarDaysElement = document.getElementById("calendar-days");
         removeAllDayElements(calendarDaysElement);   
 
 
@@ -140,55 +146,161 @@ import { browser } from "$app/env";
         days.forEach(day => {
             appendDay(day, calendarDaysElement);
         });
-
     }
+
+    let selectedMonth = dayjs(new Date(+INITIAL_YEAR, +INITIAL_MONTH - 1, 1));
 
     function initMonthSelectors() {
         document.getElementById("previous-month-selector").addEventListener("click", function() {
-        selectedMonth = dayjs(selectedMonth).subtract(1, "month");
-        createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
+            selectedMonth = dayjs(selectedMonth).subtract(1, "month");
+            createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
         });
 
         document.getElementById("present-month-selector").addEventListener("click", function() {
-        selectedMonth = dayjs(new Date(+INITIAL_YEAR, +INITIAL_MONTH - 1, 1));
-        createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
+            selectedMonth = dayjs(new Date(+INITIAL_YEAR, +INITIAL_MONTH - 1, 1));
+            createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
         });
 
         document.getElementById("next-month-selector").addEventListener("click", function() {
-        selectedMonth = dayjs(selectedMonth).add(1, "month");
-        createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
+            selectedMonth = dayjs(selectedMonth).add(1, "month");
+            createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
          });
     }
 
-    function appendDay(day, calendarDaysElement) {
-        if (day.date === TODAY) {dayElementClassList.add("calendar-day--today");}
-    }
+    createCalendar();
+    initMonthSelectors()
 }
-}
+
 </script>
 
 <h1>calendar</h1>
 
-<section class="calendar-month">
+<div class="calendar-month">
 
-    <div class="calendar-month-header">
+    <section class="calendar-month-header">
 
         <div id="selected-month" class="calendar-month-header-selected-month">
         </div>
 
         <div class="calendar-month-header-selectors">
-            <span id="previous-month-selector">→</span>
+            <span id="previous-month-selector">←</span>
             <span id="present-month-selector">today</span>
             <span id="next-month-selector">→</span>
         </div>
 
-    </div>
+    </section>
 
-    <ul id="days-of-week" class="day-of-week">
-    </ul>
+    <ol id="days-of-week" class="day-of-week">
+    </ol>
 
-    <ul id="calendar-days" class="days-grid">
-    </ul>
+    <ol id="calendar-days" class="days-grid">
+    </ol>
 
-</section>
+</div>
 
+<style>
+    
+    ol, :global(li) {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    :global(.calendar-month) {
+        position: relative;
+        /* Color of the day cell borders */
+        background-color: var(--grey-200);
+        border: solid 1px var(--grey-200);
+    }
+
+    /* Month indicator and selectors positioning */
+    .calendar-month-header {
+        display: flex;
+        justify-content: space-between;
+        background-color: #fff;
+        padding: 10px;
+    }
+
+    /* Month indicator */
+    .calendar-month-header-selected-month {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    /* Month selectors positioning */
+    .calendar-month-header-selectors {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 80px;
+    }
+
+    .calendar-month-header-selectors > * {
+        cursor: pointer;
+    }
+
+    /* | Mon | Tue | Wed | Thu | Fri | Sat | Sun | */
+    .day-of-week {
+        color: var(--grey-800);
+        font-size: 18px;
+        background-color: #fff;
+        padding-bottom: 5px;
+        padding-top: 10px;
+    }
+
+    .day-of-week, .days-grid {
+        /* 7 equal columns for weekdays and days cells */
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    :global(.day-of-week > *) {
+        /* Position the weekday label within the cell */
+        text-align: center;
+        /* padding-right: 5px; */
+    }
+
+    .days-grid {
+        height: 100%;
+        position: relative;
+        /* Show border between the days */
+        grid-column-gap: var(--grid-gap);
+        grid-row-gap: var(--grid-gap);
+        border-top: solid 1px var(--grey-200);
+    }
+
+    :global(.calendar-day) {
+        position: relative;
+        min-height: 100px;
+        font-size: 16px;
+        background-color: #fff;
+        color: var(--grey-800);
+        padding: 5px;
+    }
+
+    /* Position the day label within the day cell */
+    :global(.calendar-day > span) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        right: 2px;
+        width: var(--day-label-size);
+        height: var(--day-label-size);
+    }
+
+    :global(.calendar-day--not-current) {
+        background-color: var(--grey-100);
+         color: var(--grey-300);
+    }
+
+    :global(.calendar-day--today) {
+        padding-top: 4px;
+    }
+
+    :global(.calendar-day--today > div) {
+        color: #fff;
+        border-radius: 9999px;
+        background-color: var(--grey-800);
+    }
+</style>

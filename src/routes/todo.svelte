@@ -101,3 +101,66 @@
         {/if}
     {/each}
 </ul>
+
+<style>
+    #newtodo {
+        display: grid;
+        grid-template-columns: 55% 20% 25%;
+        grid-gap: 2rem;
+    }
+
+    :global(#newtodo >a) {
+        text-align: center;
+        background-color: var(--cloud);
+    }
+
+    #newtodo >input {
+        border-bottom: 6px solid var(--green);
+    }
+
+    #newtodo >button {
+        border-bottom: 6px solid var(--brown);
+        height: auto;
+    }
+
+    li {
+        display: grid;
+        grid-template-columns: 5% 45% 21% 7.5% 7.5%;
+        grid-template-rows: auto;
+        grid-gap: 2rem;
+        margin-bottom: 5%;
+        padding: 10px;
+        padding-right: 0px;
+        margin-right: 0px;
+        font-size: 2vh;
+        border: 2px solid var(--green);
+    }
+
+    li >span {
+        text-align: left;
+        padding-top: 1vh;
+        padding-left: 2%;
+    }
+
+    li >button {
+        height: 5vh;
+    }
+
+    button {
+        font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        border: none;
+        background-color: var(--cloud);
+        font-size: 2vh;
+        width: auto;
+    }
+
+    input {
+        outline: none;
+        border: none;
+        background-color: var(--cloud);
+        border-radius: 0;
+        line-height: 1.3;
+        padding: 10px;
+        padding: .6em 1.4em .5em .8em;
+    }
+</style>
