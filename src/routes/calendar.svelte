@@ -112,14 +112,6 @@ import { browser } from "$app/env";
         })
     }
 
-    let currentMonthDays = createDaysForCurrentMonth(INITIAL_YEAR, INITIAL_MONTH)
-    // @ts-ignore
-    let previousMonthDays = createDaysForPreviousMonth(INITIAL_YEAR, INITIAL_MONTH, currentMonthDays[0])
-    // @ts-ignore
-    let nextMonthDays = createDaysForNextMonth(INITIAL_YEAR, INITIAL_MONTH)
-    let days = [...this.previousMonthDays, ...this.currentMonthDays, ...this.nextMonthDays]
-
-
     function removeAllDayElements(calendarDaysElement) {
         let first = calendarDaysElement.firstElementChild;
 
@@ -149,6 +141,9 @@ import { browser } from "$app/env";
     }
 
     let selectedMonth = dayjs(new Date(+INITIAL_YEAR, +INITIAL_MONTH - 1, 1));
+    let currentMonthDays;
+    let previousMonthDays;
+    let nextMonthDays;
 
     function initMonthSelectors() {
         document.getElementById("previous-month-selector").addEventListener("click", function() {
@@ -168,7 +163,7 @@ import { browser } from "$app/env";
     }
 
     createCalendar();
-    initMonthSelectors()
+    initMonthSelectors();
 }
 
 </script>
