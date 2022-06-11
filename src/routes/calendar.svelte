@@ -1,6 +1,4 @@
 <script>
-import { browser } from "$app/env";
-
     import dayjs from "dayjs";
     import weekday from "dayjs/plugin/weekday";
     import weekOfYear from "dayjs/plugin/weekOfYear";
@@ -8,56 +6,14 @@ import { browser } from "$app/env";
     import {onMount} from "svelte";
     onMount(() => {})
 
-    if (browser){
+    const WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
     
     dayjs.extend(weekday);
     dayjs.extend(weekOfYear);
-
-    const WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
     const TODAY = dayjs().format("YYYY-MM-DD");
 
     const INITIAL_YEAR = dayjs().format("YYYY");
     const INITIAL_MONTH = dayjs().format("M");
-    
-    const daysOfWeekElement = document.getElementById("days-of-week")
-    const calendarDaysElement = document.getElementById("calendar-days");
-
-    const dayElement = document.createElement("li");
-    const dayElementClassList = dayElement.classList;
-
-    // Loop through the array of weekdays
-    WEEKDAYS.forEach(weekday => {
-        // For each item in the array, make a list item element
-        const weekDayElement = document.createElement("li");
-        // Append a child element inside the list item...
-        daysOfWeekElement.appendChild(weekDayElement);
-        /// ...that contains the value in the array
-        weekDayElement.innerText = weekday;
-    });
-    
-    function appendDay(day, calendarDaysElement) {
-        // Generic calendar day class
-        dayElementClassList.add("calendar-day");
-
-        // Container for day of month number
-        const dayOfMonthElement = document.createElement("span");
-
-        // Content
-        dayOfMonthElement.innerText = day.dayOfMonth;
-        
-        // Add an extra class to differentiate current month days from prev/next month days
-        if (!day.isCurrentMonth) {
-            dayElementClassList.add("calendar-day--not-current");
-        }
-
-        // Append the element to the container element
-        dayElement.appendChild(dayOfMonthElement);
-        calendarDaysElement.appendChild(dayElement);
-
-        if (day.date === TODAY) {
-            dayElementClassList.add("calendar-day--today");
-        }
-    }
 
     function getNumberOfDaysInMonth(year, month) {
         return dayjs(`${year}-${month}-01`).daysInMonth();
@@ -121,23 +77,21 @@ import { browser } from "$app/env";
         }
     }
 
-    function createCalendar(year = INITIAL_YEAR, month = INITIAL_MONTH) {
-        document.getElementById("selected-month").innerText = dayjs(
-            new Date(+year, +month - 1)
-            ).format("MMMM YYYY");
-    
-        removeAllDayElements(calendarDaysElement);   
+    // initMonthSelectors();
 
+    let days = [];
+
+    function createCalendar(year = INITIAL_YEAR, month = INITIAL_MONTH) {
+        dayjs(
+            new Date(+year, +month - 1)
+            ).format("MMMM YYYY");  
 
         currentMonthDays = createDaysForCurrentMonth(year, month);
         previousMonthDays = createDaysForPreviousMonth(year, month);
         nextMonthDays = createDaysForNextMonth(year, month);
 
-        const days = [...previousMonthDays, ...currentMonthDays, ...nextMonthDays];
-
-        days.forEach(day => {
-            appendDay(day, calendarDaysElement);
-        });
+        days = [...previousMonthDays, ...currentMonthDays, ...nextMonthDays];
+        console.log(days)
     }
 
     let selectedMonth = dayjs(new Date(+INITIAL_YEAR, +INITIAL_MONTH - 1, 1));
@@ -145,26 +99,21 @@ import { browser } from "$app/env";
     let previousMonthDays;
     let nextMonthDays;
 
-    function initMonthSelectors() {
-        document.getElementById("previous-month-selector").addEventListener("click", function() {
-            selectedMonth = dayjs(selectedMonth).subtract(1, "month");
-            createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
-        });
+    const selectPreviousMonth = ()=>{
+        selectedMonth = dayjs(selectedMonth).subtract(1, "month");
+        createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
+    }
 
-        document.getElementById("present-month-selector").addEventListener("click", function() {
-            selectedMonth = dayjs(new Date(+INITIAL_YEAR, +INITIAL_MONTH - 1, 1));
-            createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
-        });
-
-        document.getElementById("next-month-selector").addEventListener("click", function() {
-            selectedMonth = dayjs(selectedMonth).add(1, "month");
-            createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
-         });
+    const selectPresentMonth = ()=>{
+        selectedMonth = dayjs(new Date(+INITIAL_YEAR, +INITIAL_MONTH - 1, 1));
+        createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
+    }
+    const selectNextMonth = ()=>{
+        selectedMonth = dayjs(selectedMonth).add(1, "month");
+        createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
     }
 
     createCalendar();
-    initMonthSelectors();
-}
 
 </script>
 
@@ -175,20 +124,33 @@ import { browser } from "$app/env";
     <section class="calendar-month-header">
 
         <div id="selected-month" class="calendar-month-header-selected-month">
+            {selectedMonth.format("MMMM YYYY")}
         </div>
 
         <div class="calendar-month-header-selectors">
-            <span id="previous-month-selector">←</span>
-            <span id="present-month-selector">today</span>
-            <span id="next-month-selector">→</span>
+            <span id="previous-month-selector" on:click={selectPreviousMonth}>←</span>
+            <span id="present-month-selector" on:click={selectPresentMonth}>Today</span>
+            <span id="next-month-selector" on:click={selectNextMonth}>→</span>
         </div>
 
     </section>
 
     <ol id="days-of-week" class="day-of-week">
+        {#each WEEKDAYS as weekday}
+            <li>
+                {weekday}
+            </li>
+        {/each}
     </ol>
 
     <ol id="calendar-days" class="days-grid">
+        {#each days as day}
+             <li class="calendar-day" class:calendar-day--not-current={!day.isCurrentMonth} class:calendar-day--today={day.date === TODAY}>
+                 <span>
+                     {day.dayOfMonth}
+                 </span>
+             </li>
+        {/each}
     </ol>
 
 </div>
@@ -293,9 +255,9 @@ import { browser } from "$app/env";
         padding-top: 4px;
     }
 
-    :global(.calendar-day--today > div) {
-        color: #fff;
+    :global(.calendar-day--today > span) {
         border-radius: 9999px;
+        color: #fff;
         background-color: var(--grey-800);
     }
 </style>
