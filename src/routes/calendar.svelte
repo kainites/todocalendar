@@ -3,8 +3,22 @@
     import weekday from "dayjs/plugin/weekday";
     import weekOfYear from "dayjs/plugin/weekOfYear";
 
+    import db from '$lib/db';
+
     import {onMount} from "svelte";
-    onMount(() => {})
+    import Todo from "$lib/components/calendar/Todo.svelte";
+
+    let todos = [];
+    onMount(async () => {
+        const { data, error } = await db.from('todos').select('*');
+        if (error) {
+            console.log(error)
+        } else {
+        todos = data
+        };
+    })
+
+    $:console.log(todos)
 
     const WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
     
@@ -99,18 +113,22 @@
     let previousMonthDays;
     let nextMonthDays;
 
-    const selectPreviousMonth = ()=>{
+    const selectPreviousMonth = () => {
         selectedMonth = dayjs(selectedMonth).subtract(1, "month");
         createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
     }
 
-    const selectPresentMonth = ()=>{
+    const selectPresentMonth = () => {
         selectedMonth = dayjs(new Date(+INITIAL_YEAR, +INITIAL_MONTH - 1, 1));
         createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
     }
-    const selectNextMonth = ()=>{
+    const selectNextMonth = () => {
         selectedMonth = dayjs(selectedMonth).add(1, "month");
         createCalendar(selectedMonth.format("YYYY"), selectedMonth.format("M"));
+    }
+
+    function findTodosForDate(caldate, todos) {
+        return todos.filter((todo) => dayjs(todo.date).isSame(caldate));
     }
 
     createCalendar();
@@ -149,6 +167,11 @@
                  <span>
                      {day.dayOfMonth}
                  </span>
+                 <ul class="todoslist">
+                     {#each findTodosForDate(day.date, todos) || [] as todo}
+                         <Todo bind:todo></Todo>
+                     {/each}
+                 </ul>
              </li>
         {/each}
     </ol>
@@ -259,5 +282,15 @@
         border-radius: 9999px;
         color: #fff;
         background-color: var(--grey-800);
+    }
+
+    .todoslist {
+        padding-inline-start: 0rem;
+    }
+
+    .todosformat {
+        background-color: var(--cloud);
+        margin-top: 20px;
+        border-bottom: 5px solid var(--green);
     }
 </style>
