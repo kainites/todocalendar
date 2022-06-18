@@ -40,6 +40,7 @@
         if(!visible) return
         onTop = prevOnTop
         if (onTop == null) document.body.style.overflow=""
+        visible = false
         if(closeCallback) closeCallback(returnVal)
     }
 
