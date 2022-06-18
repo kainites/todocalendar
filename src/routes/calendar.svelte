@@ -287,10 +287,4 @@
     .todoslist {
         padding-inline-start: 0rem;
     }
-
-    .todosformat {
-        background-color: var(--cloud);
-        margin-top: 20px;
-        border-bottom: 5px solid var(--green);
-    }
 </style>
