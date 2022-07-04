@@ -80,11 +80,12 @@
 		align-items: center;
 		justify-content: center;
 	}
+	
 	#modal {
 		position: relative;
 		border-radius: 6px;
 		background: white;
-    border: 2px solid #000;
+    	border: 2px solid #000;
 		filter: drop-shadow(5px 5px 5px #555);
 		padding: 1em;
 	}
@@ -112,6 +113,7 @@
 		stroke:#FFF;
 		stroke-width:2;
 	}
+
 	#modal-content {
 		max-width: calc(100vw - 20px);
 		max-height: calc(100vh - 20px);

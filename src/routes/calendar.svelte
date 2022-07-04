@@ -6,7 +6,7 @@
     import db from '$lib/db';
 
     import {onMount} from "svelte";
-    import Todo from "$lib/components/calendar/Todo.svelte";
+    import Todo from "$lib/components/calendartodo/Todo.svelte";
 
     let todos = [];
     onMount(async () => {
@@ -232,6 +232,7 @@
         /* 7 equal columns for weekdays and days cells */
         display: grid;
         grid-template-columns: repeat(7, 1fr);
+        overflow: hidden;
     }
 
     :global(.day-of-week > *) {
@@ -256,6 +257,13 @@
         background-color: #fff;
         color: var(--grey-800);
         padding: 5px;
+        
+        display: flex;
+        white-space: nowrap;
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex-direction: column;
     }
 
     /* Position the day label within the day cell */
@@ -285,6 +293,8 @@
     }
 
     .todoslist {
+        margin-top: 20px;
+        max-width: 100%;
         padding-inline-start: 0rem;
     }
 </style>
