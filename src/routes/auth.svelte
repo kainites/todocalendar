@@ -3,6 +3,7 @@
 
 	let handleAuth = false;
 	let action = 'signIn';
+	$: console.log(action)
 	let email = '',
 		password = '',
 		username = '',
@@ -24,19 +25,22 @@
 
 		<input bind:value={email} type="email" placeholder="Email" />
 		<input bind:value={password} type="password" placeholder="Password" />
+		
 		{#if action === 'signUp'}
 			<input bind:value={username} type="text" placeholder="Username" />
 			<input bind:value={first_name} type="text" placeholder="First Name" />
 			<input bind:value={last_name} type="text" placeholder="Last Name" />
 		{/if}
-		<button class="border rounded bg-gray-300 hover:bg-gray-400">
+		
+		<button>
 			{handleAuth ? (action === 'signIn' ? 'Signing In...' : 'Signing Up...') : action === 'signIn' ? 'Sign In' : 'Sign Up'}
 		</button>
-        <p>
+        
+		<p>
 			{action === 'signIn' ? 'Not a member yet?' : 'Already a member?'}
-			<span on:click|preventDefault={() => (action === 'signIn' ? (action = 'signUp') : (action = 'signIn'))} class="cursor-pointer">
+			<button on:click|preventDefault={() => (action === 'signIn' ? (action = 'signUp') : (action = 'signIn'))} class="cursor-pointer">
 				{action === 'signIn' ? 'Sign Up' : 'Sign In'}
-			</span>
+			</button>
 		</p>
 	</form>
 </section>

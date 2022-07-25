@@ -38,8 +38,8 @@ export const signUp = async ({ email, password, username, first_name, last_name 
 	}
 };
 
-export const setServerCookie = async (sesh) => await fetch('/api/cookie', { method: 'POST', body: JSON.stringify(sesh) });
-export const unsetServerCookie = async () => await fetch('/api/cookie', { method: 'DELETE' });
+export const setServerCookie = async (sesh) => await fetch('api/cookie', { method: 'POST', body: JSON.stringify(sesh) });
+export const unsetServerCookie = async () => await fetch('api/cookie', { method: 'DELETE' });
 
 export const AUTH_REDIRECT = {
 	headers: { Location: '/auth' },

@@ -24,6 +24,8 @@ export const handle = async ({ event, resolve }) => {
 
 export const getSession = async (event) => {
 	const { user, authenticated } = event.locals;
+	console.log('user', user)
+	console.log('auth', authenticated)
 	return {
 		user,
 		authenticated
