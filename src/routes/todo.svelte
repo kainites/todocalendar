@@ -1,7 +1,9 @@
 <script context="module">
     import db from '$lib/db'
 
-    export async function load(){
+    export async function load({session}){
+    if (!session.authenticated) return { status: 401 };
+    db.auth.setAuth(session.access_token);
     const { data, error } = await db.from('todos').select()
     console.log(data)
     console.log(error)

@@ -1,6 +1,6 @@
 import { cookieName } from '$lib/constants';
 
-export const post = async ({ request }) => {
+export const POST = async ({ request }) => {
 	const session = request.body ? await request.json() : null;
 	if (session) {
 		return {
@@ -18,7 +18,7 @@ export const post = async ({ request }) => {
 		};
 	}
 };
-export const del = () => {
+export const DEL = () => {
 	return {
 		status: 204,
 		headers: {

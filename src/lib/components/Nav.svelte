@@ -21,7 +21,6 @@
 				{label}
 			</a>
 		{:else if $session.authenticated && roles.some((role) => userRoles.includes(role))}
-			<script>console.log($session)</script>
             <a sveltekit:prefetch href={route} class:active={route === '/' ? (pathname === '/' ? true : false) : pathname.includes(route)}>
 				{label}
 			</a>
