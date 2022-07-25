@@ -1,0 +1,5 @@
+export const cookieName = "session";
+
+export const ROUTE_HOME = '/';
+export const ROUTE_AUTH = '/auth';
+

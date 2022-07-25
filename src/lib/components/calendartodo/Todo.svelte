@@ -1,13 +1,9 @@
 <script>
     import Modal,{getModal} from './Modal.svelte'
     import db from '../../db'
-
-    import Flatpickr from 'svelte-flatpickr';
-    import flatpickr from 'flatpickr';
-	import 'flatpickr/dist/flatpickr.css';
-	import 'flatpickr/dist/themes/light.css';
     
     export let todo;
+    export let todos;
 
     const saveTodo = async (todo) => {
         const { data, error } = await db.from('todos').upsert(todo);
@@ -18,11 +14,17 @@
         console.log(data)
         console.log(error)
     }
+
+    const completeTodo = async (todo) => {
+        const { data, error } = await db.from('todos').upsert(todo);
+        todos[todos.findIndex((t) => (t.id == todo.id))] = {...todo, isCompleted: !todo.isCompleted};
+    }
 </script>
 
 <li>
-    <p class="truncated">{todo.task}</p>
+    <p class="truncated" class:todoDone={todo.isCompleted}>{todo.task}</p>
 </li>
+
 <button on:click={()=>getModal(todo.id).open()}>edit</button>
 
 <Modal id={todo.id}>
@@ -30,6 +32,7 @@
     <br>
     <input bind:value={todo.task} type="text">
     <button on:click={()=>getModal(todo.id).close(saveTodo(todo))}>save</button>
+    <button on:click={()=>getModal(todo.id).close(completeTodo(todo))}>complete</button>
     <br>
     <button on:click={()=>getModal(todo.id).close(deleteTodo(todo.id))}>delete</button>
     <button on:click={()=>getModal(todo.id).close()}>cancel</button>
@@ -56,5 +59,16 @@
 
     button {
         position: relative;
+        font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        border: none;
+        background-color: var(--cloud);
+        border: 2px solid var(--green);
+        font-size: 2vh;
+        width: auto;
+    }
+
+    .todoDone {
+        color: var(--yellow);
+        border-bottom: 5px solid var(--monogreen);
     }
 </style>

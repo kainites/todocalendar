@@ -33,54 +33,68 @@
         return dayjs(`${year}-${month}-01`).daysInMonth();
     };
 
-    function createDaysForCurrentMonth(year, month) {
-        return [...Array(getNumberOfDaysInMonth(year, month))].map((day, index) => {
-            return {
-                date: dayjs(`${year}-${month}-${index + 1}`).format("YYYY-MM-DD"),
-                dayOfMonth: index + 1,
-                isCurrentMonth: true
-            };
-        });
-    };
+    // function createDaysForCurrentMonth(year, month) {
+    //     return [...Array(getNumberOfDaysInMonth(year, month))].map((day, index) => {
+    //         return {
+    //             date: dayjs(`${year}-${month}-${index + 1}`).format("YYYY-MM-DD"),
+    //             dayOfMonth: index + 1,
+    //             isCurrentMonth: true
+    //         };
+    //     });
+    // };
 
     function getWeekday(date) {
         return dayjs(date).weekday();
     };
 
-    function createDaysForPreviousMonth(year, month) {
-        const firstDayOfTheMonthWeekday = getWeekday(currentMonthDays[0].date);
-
-        const previousMonth = dayjs(`${year}-${month}-01`).subtract(1, "month");
-  
-        // Account for first day of the month on a Sunday (firstDayOfTheMonthWeekday === 0)
-        const visibleNumberOfDaysFromPreviousMonth = firstDayOfTheMonthWeekday ? firstDayOfTheMonthWeekday - 1 : 6
-
-        const previousMonthLastMondayDayOfMonth = dayjs(currentMonthDays[0].date).subtract(visibleNumberOfDaysFromPreviousMonth, "day").date();
-
-        return [...Array(visibleNumberOfDaysFromPreviousMonth)].map((day, index) => {    
+    function createDaysForMonth(year, month, current = false) {
+        return [...Array(getNumberOfDaysInMonth(year, month))].map((day, index) => {
+            let d = dayjs(`${year}-${month}-${index + 1}`)
+            console.log(d)
+            console.log(d.format('d'))
             return {
-                date: dayjs(
-                    `${previousMonth.year()}-${previousMonth.month() + 1}-${previousMonthLastMondayDayOfMonth + index}`
-                ).format("YYYY-MM-DD"),
-                dayOfMonth: previousMonthLastMondayDayOfMonth + index,
-                isCurrentMonth: false
+                date: d.format("YYYY-MM-DD"),
+                dayOfMonth: index + 1,
+                isCurrentMonth: current,
+                weekdayNr: d.format('d')
             };
         });
     }
 
-    function createDaysForNextMonth(year, month) {
-        const lastDayOfTheMonthWeekday = getWeekday(`${year}-${month}-${currentMonthDays.length}`)
+    // function createDaysForPreviousMonth(year, month) {
+        // const firstDayOfTheMonthWeekday = getWeekday(currentMonthDays[0].date);
 
-        const visibleNumberOfDaysFromNextMonth = lastDayOfTheMonthWeekday ? 7 - lastDayOfTheMonthWeekday : lastDayOfTheMonthWeekday
+        // const previousMonth = dayjs(`${year}-${month}-01`).subtract(1, "month");
+  
+        // // Account for first day of the month on a Sunday (firstDayOfTheMonthWeekday === 0)
+        // const visibleNumberOfDaysFromPreviousMonth = firstDayOfTheMonthWeekday ? firstDayOfTheMonthWeekday - 1 : 6
 
-        return [...Array(visibleNumberOfDaysFromNextMonth)].map((day, index) => {
-            return {
-                date: dayjs(`${year}-${Number(month) + 1}-${index + 1}`).format("YYYY-MM-DD"),
-                dayOfMonth: index + 1,
-                isCurrentMonth: false
-            }
-        })
-    }
+        // const previousMonthLastMondayDayOfMonth = dayjs(currentMonthDays[0].date).subtract(visibleNumberOfDaysFromPreviousMonth, "day").date();
+
+        // return [...Array(visibleNumberOfDaysFromPreviousMonth)].map((day, index) => {    
+        //     return {
+        //         date: dayjs(
+        //             `${previousMonth.year()}-${previousMonth.month() + 1}-${previousMonthLastMondayDayOfMonth + index}`
+        //         ).format("YYYY-MM-DD"),
+        //         dayOfMonth: previousMonthLastMondayDayOfMonth + index,
+        //         isCurrentMonth: false
+        //     };
+        // });
+    // }
+
+    // function createDaysForNextMonth(year, month) {
+    //     const lastDayOfTheMonthWeekday = getWeekday(`${year}-${month}-${currentMonthDays.length}`)
+
+    //     const visibleNumberOfDaysFromNextMonth = lastDayOfTheMonthWeekday ? 7 - lastDayOfTheMonthWeekday : lastDayOfTheMonthWeekday
+
+    //     return [...Array(visibleNumberOfDaysFromNextMonth)].map((day, index) => {
+    //         return {
+    //             date: dayjs(`${year}-${Number(month) + 1}-${index + 1}`).format("YYYY-MM-DD"),
+    //             dayOfMonth: index + 1,
+    //             isCurrentMonth: false
+    //         }
+    //     })
+    // }
 
     function removeAllDayElements(calendarDaysElement) {
         let first = calendarDaysElement.firstElementChild;
@@ -95,16 +109,38 @@
 
     let days = [];
 
+    function last(array) {
+        return array[array.length - 1]
+    }
+
+    function first(array) {
+        return array[0]
+    }
+
+    function firstSunday(array) {
+        for (let i = 0; i < array.length; i++) {
+            if (array[i].weekdayNr == 0) {
+                return i+1;
+            }
+        }
+    }
+
     function createCalendar(year = INITIAL_YEAR, month = INITIAL_MONTH) {
         dayjs(
             new Date(+year, +month - 1)
             ).format("MMMM YYYY");  
 
-        currentMonthDays = createDaysForCurrentMonth(year, month);
-        previousMonthDays = createDaysForPreviousMonth(year, month);
-        nextMonthDays = createDaysForNextMonth(year, month);
+        console.log(month)
+
+        previousMonthDays = createDaysForMonth(year, +month-1);
+        previousMonthDays = last(previousMonthDays).weekdayNr != 0 ? previousMonthDays.slice(last(previousMonthDays).weekdayNr * -1) : [];
+        currentMonthDays = createDaysForMonth(year, month, true);
+        nextMonthDays = createDaysForMonth(year, +month+1);
+        nextMonthDays = first(nextMonthDays).weekdayNr != 1 ? nextMonthDays.slice(first(nextMonthDays), firstSunday(nextMonthDays)) : [];
 
         days = [...previousMonthDays, ...currentMonthDays, ...nextMonthDays];
+        // const length = previousMonthDays.length + currentMonthDays.length;
+		// days = [...previousMonthDays, ...currentMonthDays, ...nextMonthDays].slice(0, 7.0 * Math.ceil(length / 7.0));
         console.log(days)
     }
 
@@ -169,7 +205,7 @@
                  </span>
                  <ul class="todoslist">
                      {#each findTodosForDate(day.date, todos) || [] as todo}
-                         <Todo bind:todo></Todo>
+                         <Todo bind:todo bind:todos></Todo>
                      {/each}
                  </ul>
              </li>
@@ -189,15 +225,15 @@
     :global(.calendar-month) {
         position: relative;
         /* Color of the day cell borders */
-        background-color: var(--grey-200);
-        border: solid 1px var(--grey-200);
+        background-color: var(--monobrown);
+        border: solid 1px var(--monobrown);
     }
 
     /* Month indicator and selectors positioning */
     .calendar-month-header {
         display: flex;
         justify-content: space-between;
-        background-color: #fff;
+        background-color: var(--cloud);
         padding: 10px;
     }
 
@@ -221,9 +257,9 @@
 
     /* | Mon | Tue | Wed | Thu | Fri | Sat | Sun | */
     .day-of-week {
-        color: var(--grey-800);
+        color: var(--mid);
         font-size: 18px;
-        background-color: #fff;
+        background-color: var(--cloud);
         padding-bottom: 5px;
         padding-top: 10px;
     }
@@ -247,15 +283,15 @@
         /* Show border between the days */
         grid-column-gap: var(--grid-gap);
         grid-row-gap: var(--grid-gap);
-        border-top: solid 1px var(--grey-200);
+        border-top: solid 1px var(--monobrown);
     }
 
     :global(.calendar-day) {
         position: relative;
         min-height: 100px;
         font-size: 16px;
-        background-color: #fff;
-        color: var(--grey-800);
+        background-color: var(--cloud);
+        color: var(--mid);
         padding: 5px;
         
         display: flex;
@@ -278,8 +314,8 @@
     }
 
     :global(.calendar-day--not-current) {
-        background-color: var(--grey-100);
-         color: var(--grey-300);
+        background-color: var(--monogreen);
+        color: var(--cloud);
     }
 
     :global(.calendar-day--today) {
@@ -288,8 +324,8 @@
 
     :global(.calendar-day--today > span) {
         border-radius: 9999px;
-        color: #fff;
-        background-color: var(--grey-800);
+        color: var(--cloud);
+        background-color: var(--mid);
     }
 
     .todoslist {

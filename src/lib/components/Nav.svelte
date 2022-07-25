@@ -1,13 +1,27 @@
 <script>
-    const routes = [
-        {route: "/", label: "home"}, 
-        {route: "/todo", label: "to do"}, 
-        {route: "/calendar", label: "calendar"}, 
+    import { page, session } from '$app/stores';
+
+	$: pathname = $page.url.pathname;
+	$: userRoles = $session.user?.user_metadata?.roles || [];
+    $: console.log($session.user)
+
+    const ROUTES = [
+        {route: "/", label: "home", roles: ['guest']}, 
+        {route: "/todo", label: "to do", roles: ['registered']}, 
+        {route: "/calendar", label: "calendar", roles: ['registered']}, 
     ]
 </script>
 
-<nav>
-    {#each routes as route}
-         <a href={route.route} sveltekit:prefetch>{route.label}</a>
-    {/each}
+<nav class="flex gap-4">
+	{#each ROUTES as { route, label, roles }}
+        {#if roles.includes('guest')}
+            <a sveltekit:prefetch href={route} class:active={route === '/' ? (pathname === '/' ? true : false) : pathname.includes(route)}>
+				{label}
+			</a>
+		{:else if $session.authenticated && roles.some((role) => userRoles.includes(role))}
+			<a sveltekit:prefetch href={route} class:active={route === '/' ? (pathname === '/' ? true : false) : pathname.includes(route)}>
+				{label}
+			</a>
+		{/if}
+	{/each}
 </nav>

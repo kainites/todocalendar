@@ -14,8 +14,6 @@
 
     import Flatpickr from 'svelte-flatpickr';
     import flatpickr from 'flatpickr';
-	import 'flatpickr/dist/flatpickr.css';
-	import 'flatpickr/dist/themes/light.css';
     import { uuid } from '$lib/utils';
 
     let newtodo = {isCompleted: false, isEditing: false, task: '', date: null, id: uuid()};
@@ -48,6 +46,11 @@
         todos[todos.findIndex((t) => (t.id == todo.id))] = {...todo, isEditing: !todo.isEditing};
     }
 
+    export const completeTodo = async (todo) => {
+        const { data, error } = await db.from('todos').upsert(todo);
+        todos[todos.findIndex((t) => (t.id == todo.id))] = {...todo, isCompleted: !todo.isCompleted};
+    }
+
     const options = {
         altInput: true,
         altFormat: "d/m/Y",
@@ -67,38 +70,53 @@
 <ul>
     {#each todos.sort((a,b) => new Date(a.date) - new Date(b.date)) || [] as todo}
         {#if todo.date}
-            <li>
-                <input type="checkbox">
-                {#if todo.isEditing}
-                    <input bind:value={todo.task} type="text" placeholder={todo.task}>
-                    <Flatpickr {options} bind:value={todo.date} bind:formattedValue name="date" />
-                    <button on:click={() => saveTodo(todo)}>save</button>
-                {:else}
-                    <span>{todo.task}</span>
-                    <span>{todo.date == null ? '' : flatpickr.formatDate(new Date(todo.date), "d/m/Y")}</span>
-                    <button on:click={() => editTodo(todo)}>edit</button>
-                {/if}
-                <button on:click={() => deleteTodo(todo.id)} type="submit">delete</button>
-            </li>  
+            {#if !todo.isCompleted}
+                <li>
+                    <button class="incompleteButton" on:click={()=>completeTodo(todo)}></button>
+                    {#if todo.isEditing}
+                        <input bind:value={todo.task} type="text" placeholder={todo.task}>
+                        <Flatpickr {options} bind:value={todo.date} bind:formattedValue name="date" />
+                        <button on:click={() => saveTodo(todo)}>save</button>
+                    {:else}
+                        <span>{todo.task}</span>
+                        <span>{todo.date == null ? '' : flatpickr.formatDate(new Date(todo.date), "d/m/Y")}</span>
+                        <button on:click={() => editTodo(todo)}>edit</button>
+                    {/if}
+                    <button on:click={() => deleteTodo(todo.id)} type="submit">delete</button>
+                </li> 
+            {/if} 
         {/if}
     {/each}
 
     {#each todos.sort((a,b) => new Date(a.date) - new Date(b.date)) || [] as todo}
         {#if !todo.date}
-            <li>
-                <input type="checkbox">
-                {#if todo.isEditing}
-                    <input bind:value={todo.task} type="text" placeholder={todo.task}>
-                    <Flatpickr {options} bind:value={todo.date} bind:formattedValue name="date" />
-                    <button on:click={() => saveTodo(todo)}>save</button>
-                {:else}
+            {#if !todo.isCompleted}
+                <li>
+                    <button class="incompleteButton" on:click={()=>completeTodo(todo)}></button>
+                    {#if todo.isEditing}
+                        <input bind:value={todo.task} type="text" placeholder={todo.task}>
+                        <Flatpickr {options} bind:value={todo.date} bind:formattedValue name="date" />
+                        <button on:click={() => saveTodo(todo)}>save</button>
+                    {:else}
+                        <span>{todo.task}</span>
+                        <span>{todo.date == null ? '' : flatpickr.formatDate(new Date(todo.date), "d/m/Y")}</span>
+                        <button on:click={() => editTodo(todo)}>edit</button>
+                    {/if}
+                    <button on:click={() => deleteTodo(todo.id)} type="submit">delete</button>
+                </li> 
+            {/if}  
+        {/if}
+    {/each}
+
+    {#each todos.sort((a,b) => new Date(a.date) - new Date(b.date)) || [] as todo}
+        {#if todo.isCompleted}
+            <li class="completedTodo">
+                <button class="completeButton" on:click={()=>completeTodo(todo)}></button>
                     <span>{todo.task}</span>
                     <span>{todo.date == null ? '' : flatpickr.formatDate(new Date(todo.date), "d/m/Y")}</span>
-                    <button on:click={() => editTodo(todo)}>edit</button>
-                {/if}
-                <button on:click={() => deleteTodo(todo.id)} type="submit">delete</button>
-            </li>  
-        {/if}
+                <button on:click={() => deleteTodo(todo.id)} type="submit" class="completeDelete">delete</button>
+            </li> 
+        {/if}  
     {/each}
 </ul>
 
@@ -162,5 +180,30 @@
         line-height: 1.3;
         padding: 10px;
         padding: .6em 1.4em .5em .8em;
+    }
+
+    .completedTodo {
+        grid-template-columns: 5% 45% 21% 17.5%;
+        background-color: var(--monobrown);
+        border: 2px solid var(--monogreen);
+    }
+
+    .incompleteButton {
+        width: 40px;
+        height: 40px;
+        border: 5px solid var(--green);
+        border-radius: 100%;
+    }
+
+    .completeButton {
+        width: 40px;
+        height: 40px;
+        background-color: var(--monogreen);
+        border: 5px solid var(--blue);
+        border-radius: 100%;
+    }
+
+    .completeDelete {
+        background-color: var(--yellow);
     }
 </style>
