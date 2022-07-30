@@ -1,24 +1,12 @@
-<script context="module">
-    import db from '$lib/db'
-
-    export async function load({session}){
-    if (!session.authenticated) return { status: 401 };
-    db.auth.setAuth(session.access_token);
-    const { data, error } = await db.from('todos').select()
-    console.log(data)
-    console.log(error)
-    return {props:{todos:data}}
-    }
-</script>
-
 <script>
 // @ts-nocheck
-
+    import db from '$lib/db';
     import Flatpickr from 'svelte-flatpickr';
     import flatpickr from 'flatpickr';
     import { uuid } from '$lib/utils';
+    import { session } from '$app/stores';
 
-    let newtodo = {isCompleted: false, isEditing: false, task: '', date: null, id: uuid()};
+    let newtodo = {isCompleted: false, isEditing: false, task: '', date: null, id: uuid(), user_id: $session.user.id};
     export let todos = [];
     $:console.log(todos);
     let value, formattedValue;
@@ -27,7 +15,7 @@
         let modifiedtodo = {...newtodo, date: newtodo.date != '' ? flatpickr.formatDate(new Date(newtodo.date), 'Z'): null};
         const { data, error } = await db.from('todos').upsert(modifiedtodo);
         todos = [...todos, newtodo];
-        newtodo = {isCompleted: false, isEditing: false, task: '', date: null, id: uuid()};
+        newtodo = {isCompleted: false, isEditing: false, task: '', date: null, id: uuid(), user_id: $session.user.id};
         
         console.log("🚀 ~ file: todo.svelte ~ line 20 ~ addTodo ~ data", data)
         console.log("🚀 ~ file: todo.svelte ~ line 20 ~ addTodo ~ error", error)
@@ -61,7 +49,7 @@
 
 </script>
 
-<h2>to do</h2>
+<h2>To Do</h2>
 
 <div id="newtodo">
     <input bind:value={newtodo.task} type="text" placeholder="input your to do here">
@@ -127,19 +115,19 @@
         display: grid;
         grid-template-columns: 55% 20% 25%;
         grid-gap: 2rem;
+        margin-bottom: 3rem;
     }
 
     :global(#newtodo >a) {
         text-align: center;
-        background-color: var(--cloud);
     }
 
     #newtodo >input {
-        border-bottom: 6px solid var(--green);
+        border-bottom: 6px solid var(--greenmid);
     }
 
     #newtodo >button {
-        border-bottom: 6px solid var(--brown);
+        border-bottom: 6px solid var(--greenmid);
         height: auto;
     }
 
@@ -153,7 +141,7 @@
         padding-right: 0px;
         margin-right: 0px;
         font-size: 2vh;
-        border: 2px solid var(--green);
+        border: 2px solid var(--greenmid);
     }
 
     li >span {
@@ -169,7 +157,7 @@
     button {
         font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
         border: none;
-        background-color: var(--cloud);
+        background-color: var(--greenmid);
         font-size: 2vh;
         width: auto;
     }
@@ -177,7 +165,7 @@
     input {
         outline: none;
         border: none;
-        background-color: var(--cloud);
+        background-color: var(--greenmid);
         border-radius: 0;
         line-height: 1.3;
         padding: 10px;
@@ -186,26 +174,28 @@
 
     .completedTodo {
         grid-template-columns: 5% 45% 21% 17.5%;
-        background-color: var(--monobrown);
-        border: 2px solid var(--monogreen);
+        background-color: var(--greenmid);
+        border: 2px solid var(--greendark);
     }
 
     .incompleteButton {
         width: 40px;
         height: 40px;
-        border: 5px solid var(--green);
+        background-color: var(--greenwhite);
+        border: 5px solid var(--greenmid);
         border-radius: 100%;
     }
 
     .completeButton {
         width: 40px;
         height: 40px;
-        background-color: var(--monogreen);
-        border: 5px solid var(--blue);
+        background-color: var(--greendark);
+        border: 5px solid var(--greenwhite);
         border-radius: 100%;
     }
 
     .completeDelete {
-        background-color: var(--yellow);
+        color: var(--greenwhite);
+        background-color: var(--greendark);
     }
 </style>

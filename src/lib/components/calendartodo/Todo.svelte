@@ -52,8 +52,8 @@
     }
 
     p {
-        background-color: var(--cloud);
-        border-bottom: 5px solid var(--green);
+        background-color: var(--greenmid);
+        border-bottom: 5px solid var(--greenmid);
         width: 100%;
     }
 
@@ -61,14 +61,14 @@
         position: relative;
         font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
         border: none;
-        background-color: var(--cloud);
-        border: 2px solid var(--green);
+        background-color: var(--greenwhite);
+        border: 2px solid var(--greenmid);
         font-size: 2vh;
         width: auto;
     }
 
     .todoDone {
-        color: var(--yellow);
-        border-bottom: 5px solid var(--monogreen);
+        color: var(--grayheader);
+        border-bottom: 5px solid var(--greenmid);
     }
 </style>

@@ -22,6 +22,7 @@
 				signOut();
 			}
 		} else if (event === 'SIGNED_OUT') {
+			console.log("event", event)
 			if (browser) $session = { user: {}, authenticated: false };
 			const res = await unsetServerCookie();
 			if (res.status !== 204) console.error('failed to expire cookie', res);
@@ -31,7 +32,7 @@
 </script>
 
 <header>
-    <h1>welcome to your personal organiser</h1>
+    <h1>Welcome to your personal organiser!</h1>
     <Navigation></Navigation>
 </header>
 

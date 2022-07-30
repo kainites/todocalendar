@@ -8,6 +8,12 @@
     import {onMount} from "svelte";
     import Todo from "$lib/components/calendartodo/Todo.svelte";
 
+    // export async function load({session}){
+    // if (!session.authenticated) return { status: 401 };
+    // db.auth.setAuth(session.access_token);
+    // createCalendar();
+    // }
+
     let todos = [];
     onMount(async () => {
         const { data, error } = await db.from('todos').select('*');
@@ -50,8 +56,6 @@
     function createDaysForMonth(year, month, current = false) {
         return [...Array(getNumberOfDaysInMonth(year, month))].map((day, index) => {
             let d = dayjs(`${year}-${month}-${index + 1}`)
-            console.log(d)
-            console.log(d.format('d'))
             return {
                 date: d.format("YYYY-MM-DD"),
                 dayOfMonth: index + 1,
@@ -167,11 +171,10 @@
         return todos.filter((todo) => dayjs(todo.date).isSame(caldate));
     }
 
-    createCalendar();
-
+    createCalendar()
 </script>
 
-<h1>calendar</h1>
+<h1>Calendar</h1>
 
 <div class="calendar-month">
 
@@ -222,18 +225,23 @@
         list-style: none;
     }
 
+    h1 {
+        border: none;
+        padding-left: 12px;
+    }
+
     :global(.calendar-month) {
         position: relative;
         /* Color of the day cell borders */
-        background-color: var(--monobrown);
-        border: solid 1px var(--monobrown);
+        background-color: var(--greenmid);
+        border: solid 2px var(--greendark);
     }
 
     /* Month indicator and selectors positioning */
     .calendar-month-header {
         display: flex;
         justify-content: space-between;
-        background-color: var(--cloud);
+        background-color: var(--greenwhite);
         padding: 10px;
     }
 
@@ -257,9 +265,10 @@
 
     /* | Mon | Tue | Wed | Thu | Fri | Sat | Sun | */
     .day-of-week {
-        color: var(--mid);
+        color: var(--grayheader);
         font-size: 18px;
-        background-color: var(--cloud);
+        background-color: var(--greenwhite);
+        border-top: solid 2px var(--greendark);
         padding-bottom: 5px;
         padding-top: 10px;
     }
@@ -283,15 +292,16 @@
         /* Show border between the days */
         grid-column-gap: var(--grid-gap);
         grid-row-gap: var(--grid-gap);
-        border-top: solid 1px var(--monobrown);
+        background-color: var(--greendark);
+        border-top: solid 2px var(--greendark);
     }
 
     :global(.calendar-day) {
         position: relative;
         min-height: 100px;
         font-size: 16px;
-        background-color: var(--cloud);
-        color: var(--mid);
+        background-color: var(--greenmid);
+        color: var(--grayheader);
         padding: 5px;
         
         display: flex;
@@ -314,8 +324,8 @@
     }
 
     :global(.calendar-day--not-current) {
-        background-color: var(--monogreen);
-        color: var(--cloud);
+        background-color: var(--greenfade);
+        color: var(--greenmid);
     }
 
     :global(.calendar-day--today) {
@@ -324,8 +334,8 @@
 
     :global(.calendar-day--today > span) {
         border-radius: 9999px;
-        color: var(--cloud);
-        background-color: var(--mid);
+        color: var(--greenwhite);
+        background-color: var(--greendark);
     }
 
     .todoslist {

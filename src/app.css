@@ -1,19 +1,16 @@
 :root {
-  --brown: #ddcbb3;
-  --monobrown: #e7e0d7;
-  --green: #a4b696;
-  --monogreen: #b2b5b0;
-  --cloud: #fcf6f5;
-  --yellow: #d0d0ce;
-  --blue: #a3a6a3;
-  --mid: #343243;
+  --greenwhite: #f3fff0;
+  --greenfade: #d1eebd;
+  --greenmid: #a3d283;
+  --greendark: #679548;
+  --grayheader: #425044;
   --grid-gap: 1px;
   --day-label-size: 20px;
 }
  
 html {
-  background-color: var(--brown);
-  color: var(--dark);
+  background-color: var(--greenwhite);
+  color: var(--grayheader);
 }
    
 body {
@@ -35,9 +32,9 @@ header {
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
-  height: 6rem;
-  background-color: var(--green);
-  color: var(--cloud);
+  height: 5.5rem;
+  background-color: var(--grayheader);
+  color: var(--greenmid);
 }
    
 nav {
@@ -47,21 +44,22 @@ nav {
   margin-top: 0;
   left: 50%;
   transform: translateX(-50%);
-  color: var(--mid);
+  color: var(--greenwhite);
   width: 100%;
-  border: 5px solid var(--brown);
-  background-color: var(--brown);
+  background-color: var(--greenmid);
 }
    
 nav >a {
   display: inline-block;
   position: relative;
   margin-left: 30px;
+  text-decoration: none;
 }
    
 nav >a:visited {
   content:'';
-  color: var(--mid);
+  color: var(--grayheader);
+  text-decoration: none;
 }
    
 nav >a:after {
@@ -71,11 +69,11 @@ nav >a:after {
 
 h1 {
   font-style: italic;
-  background-color: var(--green);
-  color: var(--mid);
+  background-color: var(--grayheader);
+  color: var(--greenmid);
   font-size: 2rem;
   margin-bottom: 0%;
-  border-bottom: 5px solid var(--green);
+  border-bottom: 5px solid var(--greenmid);
 }
 
 h2 {

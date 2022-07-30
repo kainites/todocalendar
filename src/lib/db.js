@@ -14,6 +14,7 @@ export const signIn = async ({ email, password }) => {
 		if (error) {
 			console.error(error);
 		} else {
+			location.replace('/authredirect');
 			return user;
 		}
 	} catch (error) {
@@ -32,6 +33,7 @@ export const signUp = async ({ email, password, username, first_name, last_name 
 			console.log('Registered. Please confirm your email');
 		} else {
 			console.log('Signed up successfully');
+			location.replace('/authredirect');
 		}
 	} catch (error) {
 		console.error(error);
