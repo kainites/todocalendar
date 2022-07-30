@@ -25,8 +25,20 @@
 		{/if}
 	{/each}
     {#if $session.authenticated}
-         <button on:click={signOut}>LOG OUT</button> 
+         <button id="logOut" on:click={signOut}>LOG OUT</button> 
     {:else}
          <a href="/auth">LOG IN</a>
     {/if}
 </nav>
+
+<style>
+    #logOut {
+        background-color: var(--greenmid);
+        color: var(--grayheader);
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-size: 16px;
+        margin: 0px 0px 0px 25px;
+        border: none;
+        padding: none;
+    }
+</style>

@@ -1,1 +1,7 @@
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda atque, mollitia illum quidem, voluptate deleniti asperiores tempore quae magni iure non animi in? Dolore sint maxime eaque quas, commodi iste.
+<h2>
+    Welcome to your two-in-one personal organiser!
+</h2>
+
+<p>
+    Please <a href="/auth">sign in</a> to begin or use the Nav bar to go to your calendar.
+</p>
