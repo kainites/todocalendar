@@ -24,8 +24,6 @@
         };
     })
 
-    $:console.log(todos)
-
     const WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
     
     dayjs.extend(weekday);
@@ -134,8 +132,6 @@
             new Date(+year, +month - 1)
             ).format("MMMM YYYY");  
 
-        console.log(month)
-
         previousMonthDays = createDaysForMonth(year, +month-1);
         previousMonthDays = last(previousMonthDays).weekdayNr != 0 ? previousMonthDays.slice(last(previousMonthDays).weekdayNr * -1) : [];
         currentMonthDays = createDaysForMonth(year, month, true);
@@ -145,7 +141,6 @@
         days = [...previousMonthDays, ...currentMonthDays, ...nextMonthDays];
         // const length = previousMonthDays.length + currentMonthDays.length;
 		// days = [...previousMonthDays, ...currentMonthDays, ...nextMonthDays].slice(0, 7.0 * Math.ceil(length / 7.0));
-        console.log(days)
     }
 
     let selectedMonth = dayjs(new Date(+INITIAL_YEAR, +INITIAL_MONTH - 1, 1));

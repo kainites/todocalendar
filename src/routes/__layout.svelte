@@ -4,17 +4,12 @@
     
     import { browser } from '$app/env';
 	import { session } from '$app/stores';
-	$: console.log('hello')
-    $: console.log($session)
 	import { ROUTE_AUTH } from '$lib/constants';
 	import db, { setServerCookie, signOut, unsetServerCookie } from '$lib/db';
 
     db.auth.onAuthStateChange(async (event, sesh) => {
-        console.log('event', event)
-        console.log('sesh', sesh)
 		if (event === 'SIGNED_IN') {
 			const res = await setServerCookie(sesh);
-            console.log('res', res)
 			if (res.status === 200) {
 				if (browser) $session = { user: sesh.user, authenticated: true };
 			} else {
@@ -22,7 +17,6 @@
 				signOut();
 			}
 		} else if (event === 'SIGNED_OUT') {
-			console.log("event", event)
 			if (browser) $session = { user: {}, authenticated: false };
 			const res = await unsetServerCookie();
 			if (res.status !== 204) console.error('failed to expire cookie', res);

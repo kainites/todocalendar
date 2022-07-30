@@ -3,7 +3,6 @@
 
 	let handleAuth = false;
 	let action = 'signIn';
-	$: console.log(action)
 	let email = '',
 		password = '',
 		username = '',

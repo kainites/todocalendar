@@ -8,7 +8,6 @@
 
     let newtodo = {isCompleted: false, isEditing: false, task: '', date: null, id: uuid(), user_id: $session.user.id};
     export let todos = [];
-    $:console.log(todos);
     let value, formattedValue;
 
     let addTodo = async () => {
@@ -16,9 +15,7 @@
         const { data, error } = await db.from('todos').upsert(modifiedtodo);
         todos = [...todos, newtodo];
         newtodo = {isCompleted: false, isEditing: false, task: '', date: null, id: uuid(), user_id: $session.user.id};
-        
-        console.log("🚀 ~ file: todo.svelte ~ line 20 ~ addTodo ~ data", data)
-        console.log("🚀 ~ file: todo.svelte ~ line 20 ~ addTodo ~ error", error)
+    
     };
 
     export const deleteTodo = async (id) => {
@@ -28,7 +25,6 @@
 
     function editTodo(todo) {
         todos[todos.findIndex((t) => (t.id == todo.id))] = {...todo, isEditing: !todo.isEditing};
-        console.log(todo)
     }
 
     export const saveTodo = async (todo) => {

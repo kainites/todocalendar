@@ -11,8 +11,6 @@
 
     const deleteTodo = async (id) => {
         const { data, error } = await db.from('todos').delete().eq('id', id);
-        console.log(data)
-        console.log(error)
     }
 
     const completeTodo = async (todo) => {

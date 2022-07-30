@@ -4,14 +4,12 @@
 
 	$: pathname = $page.url.pathname;
 	$: userRoles = $session.user?.user_metadata?.roles || [];
-    $: console.log('session', $session)
 
     const ROUTES = [
         {route: "/", label: "HOME", roles: ['guest']}, 
         {route: "/todo", label: "TO DO", roles: ['registered']}, 
         {route: "/calendar", label: "CALENDAR", roles: ['registered']}
     ]
-    $: console.log(ROUTES)
 </script>
 
 <nav class="flex gap-4">
