@@ -20,7 +20,7 @@
 </script>
 
 <li>
-    <p class="truncated" class:todoDone={todo.isCompleted}>{todo.task}</p>
+    <p class="truncated" class:todoDone={todo.isCompleted} class:todoUndone={!todo.isCompleted}>{todo.task}</p>
 </li>
 
 <button on:click={()=>getModal(todo.id).open()}>edit</button>
@@ -60,13 +60,21 @@
         font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
         border: none;
         background-color: var(--greenwhite);
-        border: 2px solid var(--greenmid);
+        border: 2px solid var(--greenfade);
         font-size: 2vh;
         width: auto;
     }
 
     .todoDone {
         color: var(--grayheader);
+        background-color: var(--greenfade);
+        border-bottom: 5px solid var(--greenwhite);
+        opacity: 0.75;
+    }
+    
+    .todoUndone {
+        color: var(--grayheader);
+        background-color: var(--greenwhite);
         border-bottom: 5px solid var(--grayheader);
     }
 </style>
