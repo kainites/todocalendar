@@ -67,6 +67,6 @@
 
     .todoDone {
         color: var(--grayheader);
-        border-bottom: 5px solid var(--greenmid);
+        border-bottom: 5px solid var(--grayheader);
     }
 </style>

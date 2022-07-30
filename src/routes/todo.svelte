@@ -24,17 +24,21 @@
     }
 
     function editTodo(todo) {
+        console.log(todo.isEditing)
         todos[todos.findIndex((t) => (t.id == todo.id))] = {...todo, isEditing: !todo.isEditing};
+        console.log(todo.isEditing)
     }
 
     export const saveTodo = async (todo) => {
+        console.log(todo.isEditing)
         const { data, error } = await db.from('todos').upsert(todo);
         todos[todos.findIndex((t) => (t.id == todo.id))] = {...todo, isEditing: !todo.isEditing};
+        console.log(todo.isEditing)
     }
 
     export const completeTodo = async (todo) => {
-        const { data, error } = await db.from('todos').upsert(todo);
         todos[todos.findIndex((t) => (t.id == todo.id))] = {...todo, isCompleted: !todo.isCompleted};
+        const { data, error } = await db.from('todos').upsert(todo);
     }
 
     const options = {
