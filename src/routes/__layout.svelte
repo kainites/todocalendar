@@ -26,7 +26,7 @@
 </script>
 
 <header>
-    <h1>Welcome to your personal organiser!</h1>
+    <h1>To Do Calendar</h1>
     <Navigation></Navigation>
 </header>
 
@@ -35,6 +35,5 @@
 </main>
 
 <footer>
-    last edited: 4 march 2022
+    BY <a href="https://github.com/kainites">KAI</a><a href="https://vercel.com/kainites">NITES</a>, MARCH-JULY 2022
 </footer>
-
